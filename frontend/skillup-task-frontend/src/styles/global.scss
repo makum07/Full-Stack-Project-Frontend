@@ -1,0 +1,14 @@
+@import './variables.scss';
+@import './categoryTable.scss';
+@import './taskPage.scss';
+@import './taskForm.scss';
+@import './taskRow.scss';
+@import './categoryForm.scss';
+
+// Optional: Bootstrap
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
