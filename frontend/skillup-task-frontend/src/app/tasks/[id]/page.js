@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import axios from 'axios';
 
 import '../../../styles/taskPage.scss';
 import TaskRow from '@/app/components/TaskRow';
@@ -11,11 +12,22 @@ export default function TaskPage() {
   const categoryId = parseInt(id);
   const [tasks, setTasks] = useState([]);
 
-  const fetchTasks = () => {
-    fetch(`http://localhost:8080/api/tasks?categoryId=${categoryId}`)
-      .then(res => res.json())
-      .then(setTasks)
-      .catch(console.error);
+  const fetchTasks = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/api/tasks?categoryId=${categoryId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setTasks(res.data);
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error);
+      alert('Error fetching tasks. Please login or check permissions.');
+    }
   };
 
   useEffect(() => {
@@ -39,7 +51,7 @@ export default function TaskPage() {
           </tr>
         </thead>
         <tbody>
-          {tasks.map(task => (
+          {tasks.map((task) => (
             <TaskRow key={task.id} task={task} onTaskUpdated={fetchTasks} />
           ))}
         </tbody>

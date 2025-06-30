@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import axios from 'axios';
 import '../../styles/categoryForm.scss';
 
 export default function CategoryForm({ onCategoryAdded }) {
@@ -9,16 +10,25 @@ export default function CategoryForm({ onCategoryAdded }) {
     e.preventDefault();
     if (!name.trim()) return;
 
-    const res = await fetch('http://localhost:8080/api/categories', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    });
+    const token = localStorage.getItem('token');
 
-    if (res.ok) {
-      setName('');
-      onCategoryAdded();
-    } else {
+    try {
+      const res = await axios.post(
+        'http://localhost:8080/api/categories',
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 200 || res.status === 201) {
+        setName('');
+        onCategoryAdded();
+      }
+    } catch (error) {
+      console.error('Error creating category:', error);
       alert('Failed to add category');
     }
   };

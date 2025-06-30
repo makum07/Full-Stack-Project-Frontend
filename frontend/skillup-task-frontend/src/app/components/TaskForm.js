@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import axios from 'axios';
 import '../../styles/taskForm.scss';
 
 export default function TaskForm({ categoryId, onTaskAdded }) {
@@ -9,11 +10,13 @@ export default function TaskForm({ categoryId, onTaskAdded }) {
     dueDate: '',
   });
 
-  const handleChange = e => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newTask = {
       ...form,
@@ -21,17 +24,17 @@ export default function TaskForm({ categoryId, onTaskAdded }) {
       categoryId,
     };
 
-    const res = await fetch('http://localhost:8080/api/tasks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newTask),
-    });
+    try {
+      await axios.post('http://localhost:8080/api/tasks', newTask, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (res.ok) {
       setForm({ title: '', description: '', dueDate: '' });
       onTaskAdded();
-    } else {
-      alert('Failed to add task');
+    } catch (error) {
+      alert('Failed to add task: ' + error.message);
     }
   };
 
@@ -39,16 +42,38 @@ export default function TaskForm({ categoryId, onTaskAdded }) {
     <form className="task-form" onSubmit={handleSubmit}>
       <div className="row g-2 mb-2">
         <div className="col">
-          <input name="title" className="form-control" placeholder="Title" value={form.title} onChange={handleChange} required />
+          <input
+            name="title"
+            className="form-control"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="col">
-          <input name="description" className="form-control" placeholder="Description" value={form.description} onChange={handleChange} />
+          <input
+            name="description"
+            className="form-control"
+            placeholder="Description"
+            value={form.description}
+            onChange={handleChange}
+          />
         </div>
         <div className="col">
-          <input name="dueDate" type="date" className="form-control" value={form.dueDate} onChange={handleChange} required />
+          <input
+            name="dueDate"
+            type="date"
+            className="form-control"
+            value={form.dueDate}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="col-auto">
-          <button type="submit" className="btn btn-success">Add Task</button>
+          <button type="submit" className="btn btn-success">
+            Add Task
+          </button>
         </div>
       </div>
     </form>
