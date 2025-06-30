@@ -2,9 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import CategoryTable from './components/CategoryTable';
 import CategoryForm from './components/CategoryForm';
-import CreateDatabaseForm from './components/CreateDatabaseForm';
-import CreateTableForm from './components/CreateTableForm';
-import DynamicCrudForm from './components/DynamicCrudForm';
+
 
 export default function HomePage() {
   const [categories, setCategories] = useState([]);
@@ -26,11 +24,7 @@ export default function HomePage() {
       <CategoryForm onCategoryAdded={fetchCategories} />
       <CategoryTable categories={categories} />
 
-      <hr className="my-4" />
-      <h2>Create Database and Tables</h2>
-      <CreateDatabaseForm />
-      <CreateTableForm />
-      <DynamicCrudForm /> 
+      
     </div>
   );
 }
