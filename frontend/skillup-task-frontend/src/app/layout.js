@@ -1,5 +1,6 @@
 import '../styles/global.scss';
 import ReduxProvider from './redux/ReduxProvider';
+import Navbar from './components/Navbar';
 
 export const metadata = {
   title: 'SkillUp Task Manager',
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="container py-4">
         <ReduxProvider>
+          <Navbar />
           {children}
         </ReduxProvider>
       </body>
