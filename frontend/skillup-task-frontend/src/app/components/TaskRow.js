@@ -15,15 +15,19 @@ export default function TaskRow({ task, onTaskUpdated }) {
 
   const handleUpdate = async () => {
     try {
-      await axios.put(`http://localhost:8080/api/tasks/${task.id}`, editForm, {
+      // Ensure categoryId is retained during update
+      const updatedTask = { ...editForm, categoryId: task.categoryId };
+
+      await axios.put(`http://localhost:8080/api/tasks/${task.id}`, updatedTask, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
       setIsEditing(false);
       onTaskUpdated();
     } catch (error) {
-      alert('Update failed: ' + error.message);
+      alert('Failed to update task: ' + error.message);
     }
   };
 
@@ -36,7 +40,7 @@ export default function TaskRow({ task, onTaskUpdated }) {
       });
       onTaskUpdated();
     } catch (error) {
-      alert('Delete failed: ' + error.message);
+      alert('Failed to delete task: ' + error.message);
     }
   };
 
@@ -73,9 +77,7 @@ export default function TaskRow({ task, onTaskUpdated }) {
         <input
           type="checkbox"
           checked={editForm.completed}
-          onChange={() =>
-            setEditForm((prev) => ({ ...prev, completed: !prev.completed }))
-          }
+          onChange={() => setEditForm((prev) => ({ ...prev, completed: !prev.completed }))}
           disabled={!isEditing}
         />
       </td>

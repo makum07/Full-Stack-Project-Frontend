@@ -1,17 +1,22 @@
-import React from 'react'
+'use client';
+
+import React from 'react';
 import CreateDatabaseForm from '../components/CreateDatabaseForm';
 import CreateTableForm from '../components/CreateTableForm';
 import DynamicCrudForm from '../components/DynamicCrudForm';
-const page = () => {
+import withAuth from '../utils/withAuth';
+
+function CreateDbPage() {
   return (
-    <div>
+    <div className="container mt-4">
       <hr className="my-4" />
       <h2>Create Database and Tables</h2>
       <CreateDatabaseForm />
       <CreateTableForm />
-      <DynamicCrudForm /> 
+      <DynamicCrudForm />
     </div>
-  )
+  );
 }
 
-export default page
+// 🔐 Allow only ADMIN role
+export default withAuth(CreateDbPage, ['ROLE_ADMIN']);

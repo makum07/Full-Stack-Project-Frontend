@@ -9,6 +9,8 @@ export default function DynamicCrudForm() {
   const [records, setRecords] = useState([]);
   const [message, setMessage] = useState('');
 
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
   const handleChange = (index, field, value) => {
     const updated = [...data];
     updated[index][field] = value;
@@ -26,10 +28,15 @@ export default function DynamicCrudForm() {
   };
 
   const sendRequest = async (method, url) => {
+    if (!token) return setMessage('Unauthorized. Please login.');
+
     try {
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           dbName,
           tableName,
@@ -45,11 +52,16 @@ export default function DynamicCrudForm() {
   };
 
   const fetchRecords = async () => {
+    if (!token) return setMessage('Unauthorized. Please login.');
+
     try {
       const res = await fetch('http://localhost:8080/api/dynamic/read', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dbName, tableName })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ dbName, tableName }),
       });
       const json = await res.json();
       setRecords(json);
@@ -61,11 +73,16 @@ export default function DynamicCrudForm() {
   };
 
   const deleteRecord = async () => {
+    if (!token) return setMessage('Unauthorized. Please login.');
+
     try {
       const res = await fetch(`http://localhost:8080/api/dynamic/delete/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dbName, tableName })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ dbName, tableName }),
       });
       const text = await res.text();
       setMessage(text);
@@ -75,11 +92,16 @@ export default function DynamicCrudForm() {
   };
 
   const updateRecord = async () => {
+    if (!token) return setMessage('Unauthorized. Please login.');
+
     try {
       const res = await fetch(`http://localhost:8080/api/dynamic/update/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dbName, tableName, data: formatData() })
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ dbName, tableName, data: formatData() }),
       });
       const text = await res.text();
       setMessage(text);

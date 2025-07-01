@@ -7,6 +7,8 @@ export default function CreateTableForm() {
   const [fields, setFields] = useState([{ name: '', type: '' }]);
   const [message, setMessage] = useState('');
 
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
   const dataTypes = [
     'SERIAL PRIMARY KEY',
     'INT',
@@ -31,12 +33,21 @@ export default function CreateTableForm() {
   };
 
   const handleCreate = async () => {
+    if (!token) {
+      setMessage('Unauthorized. Please login.');
+      return;
+    }
+
     try {
       const res = await fetch('http://localhost:8080/api/database/table', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ dbName, tableName, fields }),
       });
+
       const text = await res.text();
       setMessage(text);
     } catch (err) {

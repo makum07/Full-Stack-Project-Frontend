@@ -5,11 +5,22 @@ export default function CreateDatabaseForm() {
   const [dbName, setDbName] = useState('');
   const [message, setMessage] = useState('');
 
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
   const handleCreate = async () => {
+    if (!token) {
+      setMessage('Unauthorized. Please login.');
+      return;
+    }
+
     try {
       const res = await fetch(`http://localhost:8080/api/database?dbName=${dbName}`, {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       const text = await res.text();
       setMessage(text);
     } catch (err) {
